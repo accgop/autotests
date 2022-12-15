@@ -1,13 +1,10 @@
 import pyautogui
-from pywinauto import timings
 from pywinauto.application import Application
 import keyboard
-import time
 
-def test_input_good_keyboard_price_do_40k():
-    timings.Timings.slow()
+def test_payment_only_cash_1goods_do_40k():
     try:
-        ## Старт и соединение с программой
+        #Старт и соединение с программой
         app = Application(backend='uia').start(r'cmd.exe /c C:\Users\a.liskin\Desktop\classic.bat',
             create_new_console=True,
             wait_for_idle=False).connect(title='MainWindow', timeout=10)
@@ -25,12 +22,13 @@ def test_input_good_keyboard_price_do_40k():
         app.Kassir.child_window(auto_id='labelInput', control_type='Text').wrapper_object()
         pyautogui.press(['4','7', '8', '0', '0', '7', '7', '6', '1', '0', '0', '3', '1'])
         keyboard.send('enter')
-        time.sleep(1)
+        app.Kassir.wait('ready', timeout=1)
 
         #Оплата товара наличными
         keyboard.send('space')
         pyautogui.press(['3', '1', '0', '0', '0'])
         keyboard.send('enter')
+        app.CashlessWindow.wait('ready')
         keyboard.send('enter')
 
         # Обращение к полю статуса кассы
@@ -50,6 +48,6 @@ def test_input_good_keyboard_price_do_40k():
         assert Itogo == "10,00"
 
     finally:
-        #Закрытие приложение
-        time.sleep(1)
+        #Закрытие приложения
+        app = Application().connect(title='MainWindow', timeout=1)
         app.kill()
