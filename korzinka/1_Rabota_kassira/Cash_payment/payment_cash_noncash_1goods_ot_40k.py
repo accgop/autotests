@@ -38,22 +38,17 @@ def test_payment_cash_noncash_1goods_ot_40k():
         keyboard.send('enter')
 
         # Обращение к полю статуса кассы
-        lbl_ChequeStatus = app.Kassir.child_window(title="ОПЛАТА", auto_id="lbl_ChequeStatus",
-                                                   control_type="Text").wrapper_object()
+        lbl_ChequeStatus = app.Kassir.child_window(auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
 
         # Проверка статуса кассы
-        status = lbl_ChequeStatus.element_info.rich_text
-        assert status == "ОПЛАТА"
+        assert lbl_ChequeStatus.element_info.rich_text == "ОПЛАТА"
 
         # Проверка остатка оплаты:
-        labelTextItogo = app.Kassir.child_window(title="ИТОГО: ", auto_id="labelTextItogo",
-                                                 control_type="Text").wrapper_object()
-        Itogo = labelTextItogo.element_info.rich_text
-        assert Itogo == "ИТОГО: "
+        labelTextItogo = app.Kassir.child_window(auto_id="labelTextItogo", control_type="Text").wrapper_object()
+        assert labelTextItogo.element_info.rich_text == "ИТОГО: "
 
-        lblItogo = app.Kassir.child_window(title="990,00", auto_id="lblItogo", control_type="Text").wrapper_object()
-        ostatok = lblItogo.element_info.rich_text
-        assert ostatok == "990,00"
+        lblItogo = app.Kassir.child_window(auto_id="lblItogo", control_type="Text").wrapper_object()
+        assert lblItogo.element_info.rich_text == "990,00"
 
         # ввод оставшейся суммы
         pyautogui.press(['9', '9', '0'])
@@ -64,20 +59,15 @@ def test_payment_cash_noncash_1goods_ot_40k():
         keyboard.send('enter')
 
         # Проверка статуса кассы
-        lbl_ChequeStatus = app.Kassir.child_window(title="КАССА СВОБОДНА", auto_id="lbl_ChequeStatus",
-                                                   control_type="Text").wrapper_object()
-        status = lbl_ChequeStatus.element_info.rich_text
-        assert status == "КАССА СВОБОДНА"
+        lbl_ChequeStatus = app.Kassir.child_window(auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
+        assert lbl_ChequeStatus.element_info.rich_text == "КАССА СВОБОДНА"
 
         # Проверка остатка оплаты:
-        labelTextItogo = app.Kassir.child_window(title="ИТОГО: ", auto_id="labelTextItogo",
-                                                 control_type="Text").wrapper_object()
-        Itogo = labelTextItogo.element_info.rich_text
-        assert Itogo == "ИТОГО: "
+        labelTextItogo = app.Kassir.child_window(auto_id="labelTextItogo", control_type="Text").wrapper_object()
+        assert labelTextItogo.element_info.rich_text == "ИТОГО: "
 
-        lblItogo = app.Kassir.child_window(title="0,00", auto_id="lblItogo", control_type="Text").wrapper_object()
-        ostatok = lblItogo.element_info.rich_text
-        assert ostatok == "0,00"
+        lblItogo = app.Kassir.child_window(auto_id="lblItogo", control_type="Text").wrapper_object()
+        assert lblItogo.element_info.rich_text == "0,00"
 
     finally:
         # Закрытие приложения
