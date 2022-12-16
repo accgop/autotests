@@ -32,20 +32,17 @@ def test_payment_only_cash_1goods_do_40k():
         keyboard.send('enter')
 
         # Обращение к полю статуса кассы
-        lbl_ChequeStatus = app.Kassir.child_window(title="КАССА СВОБОДНА", auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
+        lbl_ChequeStatus = app.Kassir.child_window(auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
 
         # Проверка статуса кассы
-        status = lbl_ChequeStatus.element_info.rich_text
-        assert status == "КАССА СВОБОДНА"
+        assert lbl_ChequeStatus.element_info.rich_text == "КАССА СВОБОДНА"
 
         # Проверка сдачи
-        labelTextItogo = app.Kassir.child_window(title="СДАЧА: ", auto_id="labelTextItogo", control_type="Text").wrapper_object()
-        sdacha = labelTextItogo.element_info.rich_text
-        assert sdacha == "СДАЧА: "
+        labelTextItogo = app.Kassir.child_window(auto_id="labelTextItogo", control_type="Text").wrapper_object()
+        assert labelTextItogo.element_info.rich_text == "СДАЧА: "
 
-        lblItogo = app.Kassir.child_window(title="10,00", auto_id="lblItogo", control_type="Text").wrapper_object()
-        Itogo = lblItogo.element_info.rich_text
-        assert Itogo == "10,00"
+        lblItogo = app.Kassir.child_window(auto_id="lblItogo", control_type="Text").wrapper_object()
+        assert lblItogo.element_info.rich_text == "10,00"
 
     finally:
         #Закрытие приложения
