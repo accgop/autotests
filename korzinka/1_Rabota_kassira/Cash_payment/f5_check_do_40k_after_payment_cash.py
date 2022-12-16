@@ -2,7 +2,7 @@ import pyautogui
 from pywinauto.application import Application
 import keyboard
 
-def test_f5_check_do_40k_after_payment():
+def test_f5_check_do_40k_after_payment_cash():
     try:
         #Старт и соединение с программой
         app = Application(backend='uia').start(r'cmd.exe /c C:\Users\a.liskin\Desktop\classic.bat',
@@ -32,12 +32,10 @@ def test_f5_check_do_40k_after_payment():
         pyautogui.press('f5')
 
         # Обращение к статусу чека
-        lblSecondCheck = app.Kassir.child_window(title="Есть отложенный чек", auto_id="lblSecondCheck",
-                                                 control_type="Text").wrapper_object()
+        lblSecondCheck = app.Kassir.child_window(auto_id="lblSecondCheck", control_type="Text").wrapper_object()
 
         # Проверка статуса чека
-        StatusCheck = lblSecondCheck.element_info.rich_text
-        assert StatusCheck == 'Есть отложенный чек'
+        assert lblSecondCheck.element_info.rich_text == 'Есть отложенный чек'
 
     finally:
         # Закрытие чека
