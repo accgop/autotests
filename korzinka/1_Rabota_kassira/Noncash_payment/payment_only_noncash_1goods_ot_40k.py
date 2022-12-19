@@ -2,15 +2,16 @@ import pyautogui
 from pywinauto.application import Application
 import keyboard
 
-def test_payment_only_noncash_1goods_do_40k():
+def test_payment_only_noncash_1goods_ot_40k():
     try:
-        #Старт и соединение с программой
+        # Старт и соединение с программой
         app = Application(backend='uia').start(r'cmd.exe /c C:\Users\a.liskin\Desktop\classic.bat',
             create_new_console=True,
-            wait_for_idle=False).connect(title='MainWindow', timeout=10)
+            wait_for_idle=False).connect(title='MainWindow',timeout=10)
 
         # Вход в меню кассира
-        app.MainWindow.child_window(title="1. Работа кассира", auto_id="btnKassa", control_type="Button").wrapper_object()
+        app.MainWindow.child_window(title="1. Работа кассира", auto_id="btnKassa",
+                                    control_type="Button").wrapper_object()
         keyboard.send('1')
 
         # Ввод пароля кассира
@@ -20,16 +21,22 @@ def test_payment_only_noncash_1goods_do_40k():
 
         # Ввод кода товара с клавиатуры
         app.Kassir.child_window(auto_id='labelInput', control_type='Text').wrapper_object()
-        pyautogui.press(['4', '7', '8', '0', '0', '7', '7', '6', '1', '0', '0', '3', '1'])
+        pyautogui.press(['2', '2', '0', '2', '3', '2', '6', '1'])
         keyboard.send('enter')
-        app.Kassir.wait('ready', timeout=1)
-
-        # Оплата товара
+        app.ShowActionForm.wait('ready')
+        keyboard.send('enter')
+        app.Kassir.wait('ready')
         keyboard.send('space')
-        pyautogui.press(['3', '0', '9', '9', '0'])
+        app.MessageFormYes.wait('ready')
         keyboard.send('enter')
 
-        # Выбор варианты оплаты(безналичный расчет)
+        # Ввод суммы
+        app.Kassir.wait('ready')
+        keyboard.send('space')
+        pyautogui.press(['4', '4', '9', '9', '0'])
+        keyboard.send('enter')
+
+        # Выбор варианты оплаты (безналичный расчет)
         app.CashlessWindow.wait('ready')
         keyboard.send('tab')
         keyboard.send('enter')
@@ -40,7 +47,7 @@ def test_payment_only_noncash_1goods_do_40k():
         # Проверка статуса кассы
         assert lbl_ChequeStatus.element_info.rich_text == "КАССА СВОБОДНА"
 
-        # Проверка сдачи
+        # Проверка остатка оплаты:
         labelTextItogo = app.Kassir.child_window(auto_id="labelTextItogo", control_type="Text").wrapper_object()
         assert labelTextItogo.element_info.rich_text == "ИТОГО: "
 

@@ -2,7 +2,7 @@ import pyautogui
 from pywinauto.application import Application
 import keyboard
 
-def test_payment_only_noncash_1goods_do_40k():
+def test_return_from_f5_check_do_40k_after_payment_noncash():
     try:
         #Старт и соединение с программой
         app = Application(backend='uia').start(r'cmd.exe /c C:\Users\a.liskin\Desktop\classic.bat',
@@ -24,30 +24,38 @@ def test_payment_only_noncash_1goods_do_40k():
         keyboard.send('enter')
         app.Kassir.wait('ready', timeout=1)
 
-        # Оплата товара
+        # Оплата товара наличными
         keyboard.send('space')
         pyautogui.press(['3', '0', '9', '9', '0'])
-        keyboard.send('enter')
 
-        # Выбор варианты оплаты(безналичный расчет)
-        app.CashlessWindow.wait('ready')
-        keyboard.send('tab')
-        keyboard.send('enter')
+        # Отложить чек
+        keyboard.send('f5')
+
+        # Обращение к статусу чека
+        lblSecondCheck = app.Kassir.child_window(auto_id="lblSecondCheck", control_type="Text").wrapper_object()
+
+        # Проверка статуса чека
+        assert lblSecondCheck.element_info.rich_text == 'Есть отложенный чек'
+
+        keyboard.send('f5')
+        app.Kassir.wait('ready', timeout=5)
 
         # Обращение к полю статуса кассы
         lbl_ChequeStatus = app.Kassir.child_window(auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
 
         # Проверка статуса кассы
-        assert lbl_ChequeStatus.element_info.rich_text == "КАССА СВОБОДНА"
-
-        # Проверка сдачи
-        labelTextItogo = app.Kassir.child_window(auto_id="labelTextItogo", control_type="Text").wrapper_object()
-        assert labelTextItogo.element_info.rich_text == "ИТОГО: "
-
-        lblItogo = app.Kassir.child_window(auto_id="lblItogo", control_type="Text").wrapper_object()
-        assert lblItogo.element_info.rich_text == "0,00"
+        assert lbl_ChequeStatus.element_info.rich_text == "ОПЛАТА"
 
     finally:
+        # Закрытие чека
+        app = Application().connect(title='Kassir', timeout=5)
+        pyautogui.press(['3', '0', '9', '9', '0'])
+        app.Kassir.wait('ready', timeout=5)
+        keyboard.send('enter')
+        app.CashlessWindow.wait('ready', timeout=5)
+        keyboard.send('tab')
+        keyboard.send('enter')
+
         # Закрытие приложения
-        app = Application().connect(title='MainWindow', timeout=1)
-        app.kill()
+        app.Kassir.close()
+        app.MainWindow.close()
