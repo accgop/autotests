@@ -1,7 +1,6 @@
 from pywinauto import MatchError
 from pywinauto.application import Application
 import keyboard
-import time
 
 def test_cancel_input_password():
 
@@ -15,18 +14,19 @@ def test_cancel_input_password():
         app.MainWindow.child_window(title="1. Работа кассира", auto_id="btnKassa", control_type="Button").wrapper_object()
         keyboard.send('1')
 
-        #Закрытие окна ввода пароля
-        time.sleep(1)
+        # Закрытие окна ввода пароля
+        app.InputPassword.wait('ready')
         keyboard.send('esc')
 
-        #Обращение к полю ввода пароля
+        # Обращение к полю ввода пароля
         app.InputPassword.child_window(auto_id="PasswordBox", control_type="Edit").wrapper_object()
 
-        #Исключение ожидаемой ошибки отсутствия окна ввода пароля и проверка видимости основного окна MainWindow
+        # Исключение ожидаемой ошибки отсутствия окна ввода пароля и проверка видимости основного окна MainWindow
     except MatchError:
+        app = Application().connect(title='MainWindow', timeout=1)
         assert app.MainWindow.is_visible()
 
     finally:
-        #Закрытие приложения
-        time.sleep(1)
+        # Закрытие приложения
+        app = Application().connect(title='MainWindow', timeout=1)
         app.kill()
