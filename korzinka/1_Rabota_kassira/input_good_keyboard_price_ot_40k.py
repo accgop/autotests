@@ -1,7 +1,6 @@
 import pyautogui
 from pywinauto.application import Application
 import keyboard
-import time
 
 def test_input_good_keyboard_price_ot_40k():
     try:
@@ -29,20 +28,18 @@ def test_input_good_keyboard_price_ot_40k():
         keyboard.send('enter')
 
         # Обращение к полю статуса кассы
-        lbl_ChequeStatus = app.Kassir.child_window(title="ПРОДАЖА", auto_id="lbl_ChequeStatus",
-                                                   control_type="Text").wrapper_object()
-        status = lbl_ChequeStatus.element_info.rich_text
+        lbl_ChequeStatus = app.Kassir.child_window(auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
 
         # Проверка статуса кассы
-        assert status == "ПРОДАЖА"
+        assert lbl_ChequeStatus.element_info.rich_text == "ПРОДАЖА"
 
     finally:
         # Закрытие чека
+        app = Application().connect(title='MainWindow', timeout=1)
         keyboard.send('space')
+        app.Kassir.wait('ready')
         pyautogui.press(['4', '5', '0', '0', '0'])
         keyboard.send('enter')
         keyboard.send('enter')
-
-        time.sleep(1)
-        app.kill()
-
+        app.Kassir.wait('ready').close()
+        app.MainWindow.wait('ready').close()

@@ -1,10 +1,7 @@
 from pywinauto.application import Application
-import time
 import keyboard
 
 def test_kassa_svobodna():
-
-    global app
     try:
         # Старт и соединение с программой
         app = Application(backend='uia').start(r'cmd.exe /c C:\Users\a.liskin\Desktop\classic.bat',
@@ -17,17 +14,16 @@ def test_kassa_svobodna():
 
         # Ввод пароля кассира
         app.InputPassword.child_window(auto_id="PasswordBox", control_type="Edit").wrapper_object()
-        keyboard.send(['6','5', '4', '3', '2', '1'])
+        keyboard.send(['6', '5', '4', '3', '2', '1'])
         keyboard.send('enter')
 
         #Обращение к полю статуса кассы
-        lbl_ChequeStatus = app.Kassir.child_window(title="КАССА СВОБОДНА", auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
-        status = lbl_ChequeStatus.element_info.rich_text
+        lbl_ChequeStatus = app.Kassir.child_window(auto_id="lbl_ChequeStatus", control_type="Text").wrapper_object()
 
         # Проверка статуса кассы
-        assert status == "КАССА СВОБОДНА"
+        assert lbl_ChequeStatus.element_info.rich_text == "КАССА СВОБОДНА"
 
     finally:
         #Закрытие приложения
-        time.sleep(1)
+        app = Application().connect(title='MainWindow', timeout=1)
         app.kill()
