@@ -1,7 +1,6 @@
 import pyautogui
 from pywinauto.application import Application
 import keyboard
-import time
 
 def test_f5_check_after_enter_product_code():
     try:
@@ -29,19 +28,20 @@ def test_f5_check_after_enter_product_code():
         keyboard.send('f5')
 
         # Обращение к статусу чека
-        lblSecondCheck = app.Kassir.child_window(title="Есть отложенный чек", auto_id="lblSecondCheck", control_type="Text").wrapper_object()
+        lblSecondCheck = app.Kassir.child_window(auto_id="lblSecondCheck", control_type="Text").wrapper_object()
 
         #Проверка статуса чека
-        StatusCheck = lblSecondCheck.element_info.rich_text
-        assert StatusCheck == 'Есть отложенный чек'
+        assert lblSecondCheck.element_info.rich_text == 'Есть отложенный чек'
 
     finally:
         # Закрытие чека
+        app = Application().connect(title='MainWindow', timeout=1)
         keyboard.send('f5')
         keyboard.send('space')
+        app.Kassir.wait('ready')
         pyautogui.press(['3', '1', '0', '0', '0'])
         keyboard.send('enter')
         keyboard.send('enter')
 
-        time.sleep(1)
-        app.kill()
+        app.Kassir.wait('ready').close()
+        app.MainWindow.wait('ready').close()
